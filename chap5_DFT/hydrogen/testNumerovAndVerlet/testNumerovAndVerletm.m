@@ -35,3 +35,4 @@ v = Verlet(-h, N, 1, F, uStart, uNext, v);
 % plotting along with analytical formula u(r)=r*exp(-r)
 plot(r,u,'b--',r,v,'r:');
 legend('Numerov','Verlet');
+saveas(gcf,'NumerovAndVerlet.png')
