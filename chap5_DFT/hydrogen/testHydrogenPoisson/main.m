@@ -34,5 +34,6 @@ U = alpha*r + U;
 
 % plotting
 Uanaly = -(r+1).*exp(-2*r)+1; % (5.81)
-plot(r,U,'-',r,Uanaly,'.');
+plot(r,U,'b--',r,Uanaly,'.');
 legend('Numerov','Analytical');
+saveas(gcf,'NumerovAndVerlet.png')
