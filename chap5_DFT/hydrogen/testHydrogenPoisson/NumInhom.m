@@ -1,30 +1,22 @@
-function solution = NumInhom(h, startR, maxR, uStart, uNext, F, solution)
-% u''(r)=F(r)
-% h: integration step
-% F: array of F
-% uStart: initial value of u 
-% uNext: next value of u
-% solution: u
-
-N = (maxR-startR)/h;
-h2 = h^2;
-factor = h2 / 12;
-
-wPrev = uStart-factor*F(1);
-solution(1) = uStart;
-
-u = uNext;
-solution(2) = uNext;
-w = u-factor*F(2);
-
-for i=2:N-1
-    % i is the central index
-    wNext = 2*w - wPrev + h2*u*F(i); % (2.12)
-    wPrev = w;
-    w = wNext;
-    u = w+factor*F(i+1);
-    solution(i+1) = u;
-end
-
-
+function U = NumInhom(Delta,StartR,MaxR,PhiStart,PhiNext,RHS,U)
+    % Solve U''(r)=RHS(r) 
+    % Delta: integration step
+    % StartR and MaxR: integration boundary
+    % PhiStart and PhiNext: first two intial points
+    MaxI = (MaxR-StartR)/Delta;
+    DeltaSq=Delta*Delta;
+    Fac = DeltaSq/12;
+    WPrev=PhiStart-Fac*RHS(1);
+    U(1)=PhiStart;
+    Phi=PhiNext;
+    U(2)=PhiNext;
+    W=Phi-Fac*RHS(2);
+    for I=2:MaxI-1
+         WNext = W*2 - WPrev + DeltaSq*RHS(I);
+         WPrev = W;
+         W     = WNext;
+         Phi   = W+Fac*RHS(I+1);
+         U(I+1) = Phi;
+    end
+    
 end
