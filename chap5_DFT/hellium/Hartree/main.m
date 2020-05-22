@@ -1,6 +1,5 @@
 % solve the ground state l=0 for hellium using DFT
 % with Hartree potential of one electron
-% U''(r)=n(r) is not solved accurately
 
 % paramaters and initialization
 precision=1E-7;
