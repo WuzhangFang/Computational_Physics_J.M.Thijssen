@@ -17,7 +17,8 @@ function [u0,u,n] = getWaveFunction(E,U,h,N)
     end
     n(1)=0;
 
-    normFactor=1/calInt(n,N,h);
+    r=(0:N-1)*h;
+    normFactor=1/trapz(r,n);
     n(1)=0;
     for i=2:N
         R=(i-1)*h;

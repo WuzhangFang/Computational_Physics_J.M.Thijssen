@@ -3,7 +3,8 @@ function Etot = getTotalEnergy(Eband, U, n, N,h)
     % U: Hartree potential
     % n: density
     % r: grids of radius
-    Ehar=calInt(-U.*n,N,h); % (5.82)
+    r=(0:N-1)*h;
+    Ehar=trapz(r,-U.*n); % (5.82)
     Etot = 2*Eband-Ehar;
     
 end
