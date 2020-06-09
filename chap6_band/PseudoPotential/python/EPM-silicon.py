@@ -97,4 +97,5 @@ plt.figure(figsize=(12,14))
 plt.plot(xx,E)
 plt.xlim([0,dist])
 plt.ylim([-0.1,0.6])
+plt.show()
 
