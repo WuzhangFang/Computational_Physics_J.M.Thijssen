@@ -1,0 +1,8 @@
+      DOUBLE PRECISION RealFac, PI
+
+      INTEGER PCount, RanArr(256)
+
+      PARAMETER (RealFac = 0.4656612D-9)
+
+      COMMON /RAND/ RanArr, PI, PCount
+

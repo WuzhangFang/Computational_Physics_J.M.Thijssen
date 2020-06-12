@@ -1,0 +1,380 @@
+(************** Content-type: application/mathematica **************
+                     CreatedBy='Mathematica 5.2'
+
+                    Mathematica-Compatible Notebook
+
+This notebook can be used with any Mathematica-compatible
+application, such as Mathematica, MathReader or Publicon. The data
+for the notebook starts with the line containing stars above.
+
+To get the notebook into a Mathematica-compatible application, do
+one of the following:
+
+* Save the data starting with the line of stars above into a file
+  with a name ending in .nb, then open the file inside the
+  application;
+
+* Copy the data starting with the line of stars above to the
+  clipboard, then use the Paste menu command inside the application.
+
+Data for notebooks contains only printable 7-bit ASCII and can be
+sent directly in email or through ftp in text mode.  Newlines can be
+CR, LF or CRLF (Unix, Macintosh or MS-DOS style).
+
+NOTE: If you modify the data for this notebook not in a Mathematica-
+compatible application, you must delete the line below containing
+the word CacheID, otherwise Mathematica-compatible applications may
+try to use invalid cache data.
+
+For more information on notebooks and Mathematica-compatible 
+applications, contact Wolfram Research:
+  web: http://www.wolfram.com
+  email: info@wolfram.com
+  phone: +1-217-398-0700 (U.S.)
+
+Notebook reader applications are available free of charge from 
+Wolfram Research.
+*******************************************************************)
+
+(*CacheID: 232*)
+
+
+(*NotebookFileLineBreakTest
+NotebookFileLineBreakTest*)
+(*NotebookOptionsPosition[     14988,        336]*)
+(*NotebookOutlinePosition[     15634,        358]*)
+(*  CellTagsIndexPosition[     15590,        354]*)
+(*WindowFrame->Normal*)
+
+
+
+Notebook[{
+
+Cell[CellGroupData[{
+Cell["Pseudopotential method ", "Title"],
+
+Cell[TextData[{
+  "by Aaron Danner.  E-mail the author with any questions or comments.  \
+(Contact information is provided at ",
+  ButtonBox["http://www.ece.nus.edu.sg/stfpage/eleadj/index.htm",
+    ButtonData:>{
+      URL[ "http://www.ece.nus.edu.sg/stfpage/eleadj/index.htm"], None},
+    ButtonStyle->"Hyperlink"],
+  ".)\n\nThis program follows very closely the text at ",
+  ButtonBox["http://www.ece.nus.edu.sg/stfpage/eleadj/pseudopotential.htm",
+    ButtonData:>{
+      URL[ "http://www.ece.nus.edu.sg/stfpage/eleadj/pseudopotential.htm"], 
+      None},
+    ButtonStyle->"Hyperlink"],
+  " although the text is not necessary to use the program.  This was created \
+with ",
+  StyleBox["Mathematica ",
+    FontSlant->"Italic"],
+  "5.2. The variable names should be consistent with the text description.  \
+Cells in ",
+  StyleBox["Mathematica",
+    FontSlant->"Italic"],
+  " are defined by the little blue bars on the right.  The black text below \
+is in the first cell.  Put your cursor in there somewhere and use Shift+Enter \
+to execute the code in a cell.  Then, execute subsequent cells.  Sometimes \
+they may take awhile to execute.  You can see this when the blue bars on the \
+right change to black during execution.  The variables which should be \
+changed depending on the material of the band calculation are given in red.  \
+Change the pseudopotentials until a few bandgaps in major crystal directions \
+are consistent with measured values.  At that point then the rest of the \
+bands should be accurate.  (* Comments appear in these enclosures *)"
+}], "Text"],
+
+Cell[BoxData[
+    RowBox[{
+      StyleBox[\( (*\ 
+          Set\ the\ size\ of\ the\ matrix\ to\ solve\ at\ each\ k\ point . \ \
+\ The\ matrix\ size\ is\ given\ by\ n, \ 
+          but\ set\ indirectly\ by\ using\ \(\(lim\)\(.\)\)\ *) \),
+        FontColor->RGBColor[1, 0, 0]], "\[IndentingNewLine]", 
+      StyleBox[\( (*\ 
+          lim\ of\ 5\ yields\ a\ 124  
+            x124\ matrix\ with\ good\ accuracy . \ \ lower\ is\ \
+\(\(faster\)\(.\)\)\ *) \),
+        FontColor->RGBColor[1, 0, 0]], 
+      StyleBox["\[IndentingNewLine]",
+        FontColor->RGBColor[1, 0, 0]], 
+      RowBox[{
+        StyleBox[\(lim = 5;\),
+          FontColor->RGBColor[1, 0, 0]], 
+        "\[IndentingNewLine]", \(Clear[h, k, l, m, veck, Vs, Va, a, A]\), 
+        "\[IndentingNewLine]", \( (*\ 
+          Define\ basis\ reciprocal\ lattice\ vectors\ *) \), 
+        "\[IndentingNewLine]", \(vecb1 = {\(-1\), 1, 1};\), 
+        "\[IndentingNewLine]", \(vecb2 = {1, \(-1\), 1};\), 
+        "\[IndentingNewLine]", \(vecb3 = {1, 1, \(-1\)};\), 
+        "\[IndentingNewLine]", \( (*\ 
+          Offset\ because\ each\ cell\ has\ 2\ atoms . \ \ Use\ a\ \
+symmetrical\ offset\ *) \), 
+        "\[IndentingNewLine]", \(vecT = {1\/8, 1\/8, 1\/8};\), 
+        "\[IndentingNewLine]", \(n = lim^3 - 1;\), 
+        "\[IndentingNewLine]", \( (*\ 
+          Functions\ used\ to\ help\ build\ matrix\ of\ reciprocal\ lattice\ \
+vectors\ *) \), 
+        "\[IndentingNewLine]", \(h[m_] := 
+            Floor[\(m + n/2\)\/lim^2] - Floor[lim/2];\), 
+        "\[IndentingNewLine]", \(k[m_] := 
+            Floor[Mod[m + n/2, lim^2]\/lim] - Floor[lim/2];\), 
+        "\[IndentingNewLine]", \(l[m_] := Mod[m + n/2, lim] - Floor[lim/2];\),
+         "\[IndentingNewLine]", \(K[m_] := 
+            h[m]*vecb1 + k[m]*vecb2 + l[m]*vecb3;\)}]}]], "Input"],
+
+Cell[TextData[{
+  "\n",
+  StyleBox["How do the functions for h, k, and l work?", "Subsection"],
+  "\nThe logic of the definitions of h, k, and l is as follows.  As m \
+increments, we must cover all of the possible combinations of {h,k,l}.  \
+Therefore, if lim=3, then as m is incremented {h,k,l} should cover all values \
+between {-1,-1,-1} to {1,1,1}.  A value of lim=3 means that h can take on 3 \
+values, in this case -1, 0, and 1.  If lim=5, then {h,k,l} must cover all \
+integers in the range {-2,-2,-2} to {2,2,2}.  This takes place as follows in \
+this example:\n\nm\th\tk\tl\n-2\t0\t0\t-2\n-1\t0\t0\t-1\n0\t0\t0\t0\n1\t0\t0\t\
+1\n2\t0\t0\t2\n3\t0\t1\t-2\n4\t0\t1\t-1\n5\t0\t1\t0\n6\t0\t1\t1\n7\t0\t1\t2\n\
+8\t0\t2\t-2\netc."
+}], "Text"],
+
+Cell[BoxData[
+    RowBox[{\( (*\ Material\ parameters\ *) \), "\[IndentingNewLine]", 
+      RowBox[{
+        RowBox[{
+          StyleBox[\(a = 5.6533\),
+            FontColor->RGBColor[1, 0, 0]], 
+          StyleBox[";",
+            FontColor->RGBColor[1, 0, 0]], 
+          StyleBox[" ",
+            FontColor->RGBColor[1, 0, 0]], 
+          StyleBox[\( (*\ lattice\ constant\ in\ Angstroms\ *) \),
+            FontColor->RGBColor[1, 0, 0]], 
+          "\[IndentingNewLine]", \(m0 = 9.11*10\^\(-31\)\), ";", 
+          " ", \( (*\ electron\ mass\ in\ kg\ *) \), 
+          "\[IndentingNewLine]", \(hbarJs = 1.054*10\^\(-34\)\), ";", 
+          " ", \( (*\ hbar\ in\ J - s\ *) \), 
+          "\[IndentingNewLine]", \(hbareV = 6.581*10\^\(-16\)\), ";", 
+          " ", \( (*\ hbar\ in\ eV - s\ *) \), "\[IndentingNewLine]", 
+          StyleBox["\[IndentingNewLine]",
+            FontColor->RGBColor[1, 0, 0]], 
+          
+          StyleBox[\( (*\ 
+              Pseudopotentials\ in\ eV\ \(\((from\ Rydberg\ units, \ 
+                    as\ is\ usual\ in\ publications)\)\ --\)\ Change\ the\ \
+first\ number\ in\ each\ \(\(definition\)\(.\)\)\ *) \),
+            FontColor->RGBColor[1, 0, 0]], 
+          "\[IndentingNewLine]", \( (*\ 
+            The\ last\ number\ in\ each\ definition\ below\ identifies\ which\
+\ form\ factor\ it\ is\ *) \), 
+          StyleBox["\[IndentingNewLine]",
+            FontColor->RGBColor[1, 0, 0]], \(Vs[m_] := 0\)}], 
+        StyleBox["\[IndentingNewLine]",
+          FontColor->RGBColor[1, 0, 0]], 
+        RowBox[{\(Vs[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox[\(-0.23\),
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 3\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Vs[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 4\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Vs[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0.01",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 8\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Vs[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0.06",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 11\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Va[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0.07",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 3\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Va[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0.05",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 4\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Va[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 8\)}]}], "\[IndentingNewLine]", 
+        RowBox[{\(Va[m_]\), ":=", 
+          RowBox[{
+            RowBox[{
+              StyleBox["0.01",
+                FontColor->RGBColor[1, 0, 0]], "*", "13.6059"}], 
+            "/;", \(K[m] . K[m] \[Equal] 11\)}]}], 
+        StyleBox["\[IndentingNewLine]",
+          FontColor->RGBColor[1, 0, 0]], \(Va[m_] := 0\), 
+        "\[IndentingNewLine]", 
+        "\[IndentingNewLine]", \( (*\ 
+          Definition\ of\ the\ potential\ and\ matrix\ elements\ *) \), 
+        "\[IndentingNewLine]", \(V[m_] := 
+            Vs[m]*Cos[2\ \[Pi]\ K[m] . vecT] + \[ImaginaryI]*Va[m]*
+                Sin[2\ \[Pi]\ K[m] . vecT];\), 
+        "\[IndentingNewLine]", \(A[i_, j_, 
+              veck_] := \(hbarJs*hbareV\)\/\(2\ m0\)*
+                Abs[\((veck + K[i])\) . \((veck + K[i])\)]*
+                KroneckerDelta[i, 
+                  j]*\((\(2\ \[Pi]\)\/\(a*10\^\(-10\)\))\)^2 + V[i - j];\), 
+        "\[IndentingNewLine]", \( (*\ 
+          Output\ the\ matrix\ size\ n\ x\ \(n\ --\)\ This\ is\ n\ *) \), 
+        "\[IndentingNewLine]", "n"}]}]], "Input"],
+
+Cell[BoxData[
+    \(\(\( (*\ 
+      kgenerator\ generates\ k\ values\ for\ m\  = \ 
+        0\ to\ 40\ to\ make\ a\ complete\ band\ diagram; \ 
+      m\ is\ the\ x\ axis\ of\ a\ band\ diagram\ *) \)\(\[IndentingNewLine]\)\
+\( (*\ this\ is\ merely\ a\ function\ definition\ that\ is\ later\ used\ \
+*) \)\(\[IndentingNewLine]\)\(kgenerator[
+        m_] := {0.5 - m/20, 0.5 - m/20, 0.5 - m/20} /; 
+        m \[LessEqual] 10\  (*\ 
+      L \(( .5,  .5,  .5)\)\ to\ \[CapitalGamma] \((0, 0, 
+          0)\)\ 10\ points\ *) \[IndentingNewLine]
+    kgenerator[m_] := {\((m - 10)\)/10, 0, 0} /; 
+        m > 10 && m \[LessEqual] 20\  (*\ \[CapitalGamma] \((0, 0, 
+          0)\)\ to\ X \((1, 0, 0)\)\ 10\ points\ *) \[IndentingNewLine]
+    kgenerator[m_] := {1, \((m - 20)\)/10, 0} /; 
+        m > 20 && m \[LessEqual] 25\  (*\ 
+      X \((1, 0, 0)\)\ to\ W \((1,  .5, 
+          0)\)\ 5\ points\ *) \[IndentingNewLine]
+    kgenerator[m_] := {1 - \((m - 25)\)/20, 0.5 + \((m - 25)\)/20, 0} /; 
+        m > 25 && m \[LessEqual] 30\  (*\ 
+      W \((1,  .5, 0)\)\ to\ K \(( .75,  .75, 0)\)\ *) \[IndentingNewLine]
+    \(\(kgenerator[m_]\)\(:=\)\({0.75 - \((m - 30)\)/\((40/3)\), 
+        0.75 - \((m - 30)\)/\((40/3)\), 0}\)\(\ \)\( (*\ 
+        K\ to\ \[CapitalGamma]\ *) \)\)\)\)\)], "Input"],
+
+Cell[BoxData[
+    \(\(\( (*\ 
+      This\ solves\ the\ band\ diagram\ at\ three\ symmetry\ points . \ \ The\
+\ list\ of\ values\ represent\ energies\ in\ eV\ of\ bands\ crossing\ the\ \
+given\ symmetry\ point . \ \ They\ are\ not\ referenced\ to\ any\ energy . \ \
+\ Only\ their\ relationship\ to\ each\ other\ matters . \ \ A\ full\ diagram\ \
+calculation\ is\ in\ the\ next\ \(\(cell\)\(.\)\)\ \ *) \)\(\
+\[IndentingNewLine]\)\( (*\ 
+      Solve\ the\ \[CapitalGamma]\ point\ \
+*) \)\(\[IndentingNewLine]\)\(\(matrixA\  = \ 
+        Table[A[i, j, {0, 0, 0}], {i, \(-n\)/2, n/2}, {j, \(-n\)/2, 
+            n/2}];\)\[IndentingNewLine]
+    gammalist = 
+      Take[Re[Eigenvalues[matrixA]], \(-10\)]\[IndentingNewLine] (*\ 
+      X\ Point\ *) \[IndentingNewLine]
+    \(matrixA\  = \ 
+        Table[A[i, j, {1, 0, 0}], {i, \(-n\)/2, n/2}, {j, \(-n\)/2, 
+            n/2}];\)\[IndentingNewLine]
+    xlist = Take[Re[Eigenvalues[matrixA]], \(-10\)]\[IndentingNewLine] (*\ 
+      L\ Point\ *) \[IndentingNewLine]
+    \(matrixA\  = \ 
+        Table[A[i, j, { .5,  .5,  .5}], {i, \(-n\)/2, n/2}, {j, \(-n\)/2, 
+            n/2}];\)\[IndentingNewLine]
+    llllist = Take[Re[Eigenvalues[matrixA]], \(-10\)]\)\)\)], "Input"],
+
+Cell[BoxData[
+    RowBox[{
+      RowBox[{"(*", " ", 
+        RowBox[{
+          RowBox[{
+          "Output", " ", "the", " ", "entire", " ", "band", " ", "diagram", 
+            " ", "and", " ", "save", " ", "to", " ", "a", " ", 
+            RowBox[{"file", ".", "  ", 
+              StyleBox["Enter",
+                FontColor->RGBColor[1, 0, 0]]}], 
+            StyleBox[" ",
+              FontColor->RGBColor[1, 0, 0]], 
+            StyleBox["the",
+              FontColor->RGBColor[1, 0, 0]], 
+            StyleBox[" ",
+              FontColor->RGBColor[1, 0, 0]], 
+            StyleBox["filename",
+              FontColor->RGBColor[1, 0, 0]], 
+            StyleBox[" ",
+              FontColor->RGBColor[1, 0, 0]], 
+            RowBox[{
+              StyleBox["below",
+                FontColor->RGBColor[1, 0, 0]], 
+              StyleBox[".",
+                FontColor->RGBColor[1, 0, 0]], "  ", "You"}], " ", "may", " ",
+             "have", " ", "to", " ", "search", " ", "for", " ", "it"}], ",", 
+          " ", \(since\ Mathematica\ puts\ files\ in\ weird\ places . \ \ \
+Open\ in\ Excel\ by\ importing\ as\ a\ comma\ separated\ text\ file . \ \ \
+Each\ row\ represents\ a\ vertical\ slice\ of\ a\ band\ diagram . \ 
+              Top\ rows\ are\ left\ slices . \ \ The\ numbers\ are\ not\ \
+referenced\ to\ any\ particular\ energy\), ",", 
+          " ", \(although\ the\ unit\ is\ correct\ in\ eV . \ \ Usually\ the\ \
+values\ are\ shifted\ so\ that\ the\ highest\ valence\ band\ gets\ energy\ of\
+\ zero . \ \ This\ takes\ some\ time\ to\ execute\)}], " ", "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{\(outputband = 
+          Table[\[IndentingNewLine]matrixA = 
+              Table[A[i, j, kgenerator[m]], {i, \(-n\)/2, n/2}, {j, \(-n\)/2, 
+                  n/2}]; \[IndentingNewLine]locallist = 
+              Take[Re[Eigenvalues[matrixA]] - 8.52357, \(-15\)]; 
+            Print[locallist]; locallist, {m, 0, 40}]\), "\[IndentingNewLine]",
+         
+        StyleBox[\( (*\ filename\ in\ quotes\ next\ line\ *) \),
+          FontColor->RGBColor[1, 0, 0]], 
+        "\[IndentingNewLine]", \(Export["\<gaasband.out\>", 
+            outputband, "\<CSV\>"];\)}]}]], "Input"]
+}, Open  ]]
+},
+FrontEndVersion->"5.2 for Microsoft Windows",
+ScreenRectangle->{{0, 1280}, {0, 941}},
+WindowSize->{1189, 918},
+WindowMargins->{{35, Automatic}, {Automatic, 26}}
+]
+
+(*******************************************************************
+Cached data follows.  If you edit this Notebook file directly, not
+using Mathematica, you must remove the line containing CacheID at
+the top of  the file.  The cache data will then be recreated when
+you save this file from within Mathematica.
+*******************************************************************)
+
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+
+(*NotebookFileOutline
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[1776, 53, 40, 0, 95, "Title"],
+Cell[1819, 55, 1573, 30, 147, "Text"],
+Cell[3395, 87, 1809, 37, 372, "Input"],
+Cell[5207, 126, 744, 12, 357, "Text"],
+Cell[5954, 140, 4314, 96, 505, "Input"],
+Cell[10271, 238, 1285, 23, 150, "Input"],
+Cell[11559, 263, 1213, 23, 250, "Input"],
+Cell[12775, 288, 2197, 45, 210, "Input"]
+}, Open  ]]
+}
+]
+*)
+
+
+
+(*******************************************************************
+End of Mathematica Notebook file.
+*******************************************************************)
+

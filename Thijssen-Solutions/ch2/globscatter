@@ -1,0 +1,14 @@
+      IMPLICIT NONE
+
+      INTEGER MaxSol
+
+      PARAMETER (MaxSol = 60000)
+
+      DOUBLE PRECISION MaxEner, PI, Epsilon, RydConst, Rm,
+     .       MinEner, MaxDist, Start, K, HStep, FArr(MaxSol)
+    
+      INTEGER LMax, EnerNum, MaxI
+
+      COMMON  MaxDist, MaxEner, MinEner, PI, HStep, Epsilon, RydConst,
+     .        Rm, Start, K, FArr, LMax, EnerNum, MaxI
+

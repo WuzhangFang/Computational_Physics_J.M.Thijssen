@@ -1,0 +1,16 @@
+#example makefile for HP-UX
+
+#
+# If no environment variable XPSDIR is specified, 
+# do it here, e.g.
+#    XPSDIR = /home/jost/XPS
+#
+INCFLAG = -I/usr/include/X11 -I$(XPSDIR)
+XLIBS =  -L$(XPSDIR) -L/usr/contrib/mitX11R5/lib -lxps -lX11 -lXext -lm
+
+.f:  
+	fort77 $< $(XLIBS) -o $@
+
+.c: 
+	cc $< $(XLIBS) -o $@
+

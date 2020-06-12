@@ -1,0 +1,18 @@
+#
+# The following directory-specifications will need modification
+#
+# XPSDIR = /home/jost/XPS
+INCFLAG = -I$(XPSDIR)/include -I/usr/include/X11
+
+XPS: $(XPSDIR)/src/XPSgraph.c $(XPSDIR)/src/XPS3D.c
+	cc -O -c -o $(XPSDIR)/lib/XPSgraph.o $(INCFLAG) $(XPSDIR)/src/XPSgraph.c; \
+        cc -O -c -o $(XPSDIR)/lib/XPS3D.o $(INCFLAG) $(XPSDIR)/src/XPS3D.c; \
+        f77 -O -c -o $(XPSDIR)/lib/D3DrawSurf.o $(XPSDIR)/src/D3DrawSurf.f; \
+        ar r $(XPSDIR)/lib/libxps.a $(XPSDIR)/lib/XPSgraph.o $(XPSDIR)/lib/XPS3D.o \
+             $(XPSDIR)/lib/D3DrawSurf.o
+	ranlib $(XPSDIR)/lib/libxps.a 
+
+lib: $(XPSDIR)/lib/XPSgraph.o
+	
+clean: 
+	rm -f $(XPSDIR)/lib/*.o $(XPSDIR)/lib/libxps.a

@@ -1,0 +1,14 @@
+# Sample makefile for HP-UX
+
+#
+# The following directory-specifications will need modification
+#
+X11DIR=/usr/contrib/mitX11R5
+XPSDIR = /home/jost/XPS
+INCFLAG = -I$(XPSDIR) -I$(X11DIR)/include -I$(X11DIR)/include/X11
+
+XPS: $(XPSDIR)/XPSgraph.c
+	cc -g -c -o $(XPSDIR)/hp/XPSgraph.o $(INCFLAG) $(XPSDIR)/XPSgraph.c 
+
+lib: $(XPSDIR)/XPSgraph.o
+	ar r $(XPSDIR)/hp/libxps.a $(XPSDIR)/hp/XPSgraph.o

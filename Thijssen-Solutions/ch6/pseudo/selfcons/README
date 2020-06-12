@@ -1,0 +1,6 @@
+This program (self-consistent pseudopotential calculation) is
+only provided as f90 code. It uses essential features of f90.
+Extensive use is make of the fftw library. This library is efficient
+and widely used, but the definitions of the routines vary with versions.
+The present versions works on a SUSE 10.1 Linux distribution of 2006.
+Some adaptation may be necessary within the file "fft.f"

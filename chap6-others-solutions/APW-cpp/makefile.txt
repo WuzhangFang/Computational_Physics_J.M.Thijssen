@@ -1,0 +1,22 @@
+C++ = g++
+F77 = ifort
+LIBS = -llapack -lblas -lg2c  -L/opt/intel_fc_80/lib -lifcore
+objects = ludcmp.o apw.o
+exe = apw
+CFLAGS = -O3
+FFLAGS = -O3
+
+$(exe) : $(objects)
+	g++ $(CFLAGS) -o $@ $(objects) $(LIBS)
+
+clean :
+	rm -f $(objects) $(exe)
+
+
+.SUFFIXES : .cc
+.cc.o:
+	$(C++) $(CFLAGS) -c $<
+
+.SUFFIXES : .f
+.f.o:
+	$(F77) $(FFLAGS) -c $<

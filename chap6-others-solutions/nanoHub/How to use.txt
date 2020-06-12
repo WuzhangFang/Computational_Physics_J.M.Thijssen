@@ -1,0 +1,50 @@
+Instructions:
+
+1. Extract all the files (.m extension) to a single folder/location
+2. Open epm.m and excecute the code (or press F5), by default the code will calculate and plot Silicon bandstructure.
+
+---------
+
+Notes:
+
+i.) the folder to which you extract the files must be included in the MATLAB execution path,
+   this shouldn't be a problem for recent versions of MATLAB. 
+   For old version of MATLAB e.g. v.5 it is safer to extract the files fo the MATLAB "work" directory.
+
+ii.) if any webpages are no longer availabile, it might be possible to have a look at a copy of it through the 
+     Internet Archive (http://www.archive.org)
+
+iii.) the plotted bandstructure is unshifted (note: maximize the window for a better view)
+
+
+iv.) the Form Factors values are in Vpsuedo.m ,if you want to calculate the bandstructure for some other materials,
+    some adjustments to the code are needed.
+
+
+---------
+Comments:
+
+this code was done as a computational project/excercise for a lecture relevant to semiconductor physics.
+I found a very good excercise, especially since I wasn't familiar with Mathematica (ref.1, code readily availabile)
+so figuring the code flow was annonying. The FORTRAN code helped in clearing this a bit (ref.2).
+
+Many thanks to the authors in Ref.1 & Ref.2, especially Dr.Danner for his online tutorial.
+
+I would like to thank as well Prof.Peter Vogl for his awesome lecture, it was truely inspirational.
+
+Ref.1 (Danner): http://www.ece.nus.edu.sg/stfpage/eleadj/pseudopotential.htm
+Ref.2 (Welsher): http://large.stanford.edu/courses/2007/ap272/welsher1/
+-Empirical Pseudopotential Form factors are from Marvin L. Cohen and T.K. Bergstresser,
+"Band Structures and Pseudopotential Form Factors forFourteen Semiconductors of the Diamond and Zinc-blende Structures,”
+ Phys. Rev. 141, 2, p. 556, 1966.
+
+I hope for the next version I would include graphical flowchart.
+
+--------
+
+Muhanad Zaki.
+contact: muhanad@gmail.com
+
+
+Version History:
+v.1: 08.02.2010

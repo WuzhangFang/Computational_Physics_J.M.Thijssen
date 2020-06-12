@@ -1,0 +1,15 @@
+       IMPLICIT NONE
+
+       INTEGER MaxSol, MaxI
+
+       PARAMETER (MaxSol = 10000)
+
+       DOUBLE PRECISION h, MaxRad, RadArr(MaxSol), FArr(MaxSol),
+     .                  HartPot(MaxSol), Z, ChDens(MaxSol), HartCorr,
+     .                  Vx(MaxSol), ExcCorr, PI, CorrCorr, 
+     .                  Vc(MaxSol), Ec(MaxSol), Third
+
+       COMMON h, MaxRad, RadArr, HartPot, Z, FArr, HartCorr, Vx,
+     .        ChDens, ExcCorr, PI, Third, Vc, Ec, CorrCorr, MaxI
+
+

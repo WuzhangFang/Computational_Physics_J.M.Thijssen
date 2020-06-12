@@ -1,0 +1,630 @@
+\documentstyle[11pt]{article}
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\eeq}{\end{equation}}
+\newcommand{\bspl}{\begin{split}}
+\newcommand{\espl}{\end{split}}
+\newcommand{\balat}{\begin{alignat}}
+\newcommand{\ealat}{\end{alignat}}
+\newcommand{\bmul}{\begin{multline}}
+\newcommand{\emltl}{\end{multline}}
+\newcommand{\barr}{\begin{array}}
+\newcommand{\ear}{\end{array}}
+\newcommand{\beqa}{\begin{eqnarray}}
+\newcommand{\eeqa}{\end{eqnarray}}
+\newcommand{\bc}{\begin{center}}
+\newcommand{\ec}{\end{center}}
+\newcommand{\bi}{\begin{itemize}}
+\newcommand{\ei}{\end{itemize}}
+\newcommand{\ben}{\begin{enumerate}}
+\newcommand{\een}{\end{enumerate}}
+\newcommand{\bq}{\begin{quote}}
+\newcommand{\eq}{\end{quote}}
+\newcommand{\hs}{\hspace*}
+\newcommand{\vs}{\vspace*}
+\newcommand{\ns}{\normalsize}
+\newcommand{\bm}{\boldmath}
+\newcommand{\bfig}{\begin{figure}}
+\newcommand{\efig}{\end{figure}}
+\newcommand{\bp}{\begin{quote} \tt}
+\newcommand{\ep}{\end{quote}}
+\newcommand{\fs}{\footnotesize}
+\newcommand{\bpic}{\begin{picture}}
+\newcommand{\epic}{\end{picture}}
+\newcommand{\btab}{\begin{tabular}}
+\newcommand{\etab}{\end{tabular}}
+\newcommand{\hb}{{h \hspace{-0.5em}}^{\--}}
+\newcommand{\shb}{{h \hspace{-0.5em}}^{\--}}
+\newcommand{\csgn}{ [{\bf C}] }
+\newcommand{\bfr}{{\bf r}}
+\newcommand{\bfv}{{\bf v}}
+\newcommand{\bfF}{{\bf F}}
+\newcommand{\bfp}{{\bf p}}
+\newcommand{\bfx}{{\bf x}}
+\newcommand{\bfk}{{\bf k}}
+\newcommand{\bfR}{{\bf R}}
+\newcommand{\mb}{\makebox}
+\newcommand{\ra}{\rangle}
+\newcommand{\la}{\langle}
+\newcommand{\lrar}{\leftrightarrow}
+\topmargin 0cm
+\evensidemargin 0cm
+\oddsidemargin 0cm
+\textwidth 16cm
+\textheight 23cm
+\begin{document}
+\Large
+\bc
+The XPS-graphics library for X-windows and Postscript \vs{1em} \\
+\large
+Jos Thijssen \\
+Version 0.1 \\
+\today
+\ec
+\ns
+
+\it
+This is a manual for a graphics library for real-time graphics 
+with postscript and X windows. The library is still under development and
+users are invited to forward any remarks or bugs to {\tt Jos.Thijssen@astro.cf.ac.uk}.
+\rm
+
+
+\section{General information}
+
+People using X windows in a UNIX environment have several beautiful 
+graphics packages and programs at their disposal. For drawing various 
+shapes and forms, the Xfig program is useful, and for making graphs, gnuplot
+is the appropriate tool. Both programs are easy to use even for inexperienced
+computer users. For real-time graphics, various libraries are available, like
+Phigs and GKS. These libraries are extremely versatile and powerful, resulting
+in a high degree complexity which often discourages 
+novice users. 
+
+The XPS-graphics package sacrifices the versality and power of these libraries 
+to user-friendliness. Using it should be no problem for people knowing
+a bit of Fortran or C programming. The library contains a number of 
+subroutines (functions) that can be called from a Fortran or C program.
+It provides graphics features like line-drawing, circles, text in various
+fonts and polygon filling. The last two features are lacking in gnuplot.
+
+The merit of the library lies in its capability to produce real-time graphics,
+that is, data displayed on the screen by the same program that is producing 
+them. This is useful when 
+one wants to monitor the evolution of a structure and when one 
+is debugging a program. Furthermore, the various fonts and the capability of
+filling polygons make it a possible alternative to gnuplot in some cases. 
+
+\section{Description of the library}
+
+The XPS library has a restricted set of functions to draw lines, filled polygons
+and circles on the screen or on the paper. Moreover, it is possible to put 
+text on the screen. All positions are given in {\it user coordinates}, 
+coordinates defined by the user and which avoid the necessity of converting 
+all positions to the physical screen or postscript coordinates. 
+
+In the future, the library will be extended to contain 3D graphics and to 
+make graph drawing more easy. 
+
+Any suggestions are welcome. 
+
+\section{Getting the library and installing it}
+
+All necessary files can be found in the directory {\tt /home/orion/spxjmt} in the
+domain {\tt astro.cf.ac.uk} (you can also send an e-mail to Jos.Thijssen@astro.cf.ac.uk).
+The directory contains the source files, makefiles, a postscript
+header file and this documentation ({\tt doc.tex}).
+
+To install the library, put all {\tt .c} and {\tt .h} files in some directory,
+together with the makefiles {\tt make.lib} and {\tt makefile} and the postscript
+header file {\tt prelude}. Edit the makefiles to match your local system 
+configuration. 
+There are two makefiles, {\tt make.lib} and {\tt makefile}. {\tt make.lib}
+is used to build the library file in the directory {\tt XPSDIR}. Just type 
+\bq
+\tt
+make -f make.lib
+\eq
+and the relevant files will be compiled and stored in a library called 
+libxps.a.
+
+Before compilation and running the resulting executable, define an environment 
+variable 
+{\tt XPSDIR} containing the path to the files {\tt prelude} and {\tt libxps.a},
+e.g.
+\bq
+\tt
+setenv XPSDIR /home/jost/XPS
+\eq
+To compile an application make sure that the {\tt makefile} of the XPS package
+is in the same directory as your C or Fortran file and type 
+\bq
+\tt
+make {\it myprog}
+\eq 
+for a C-program {\it myprog}.c or a FORTRAN program {\it myprog}.f exisiting
+in your directory.
+The executable result will be put in a file named {\it myprog}. 
+
+\section{Description of functions}
+The names of the Fortran subroutines or C-functions are equal. A difference 
+is of course that their names are case sensitive for C only. 
+\\
+
+The functions (subroutines) are now listed in groups according to their action 
+and described. In the following 
+we will not use the word ``subroutines'', but only ``functions'', since these 
+are only known in C. Sometimes, the Fortran type CHARACTER** is used, meaning
+a character string type of arbitrary length, e.g.\ CHARACTER*64.
+\bi
+\item{\large Initplot} \vs{1.5mm}\\
+Start the plot.  \vs{1.5mm}\\ 
+{\tt InitPlot(ColorName, width, height, PSFileName, OutPar) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it ColorName & char * & CHARACTER** & name of the background-color \\
+\it width	& int	& INTEGER	& width of the plot \\
+\it height	& int	& INTEGER	& height of the plot \\
+\it PSFileName	& char *& CHARACTER**	& name of postscript file \\
+\it OutPar	& int	& INTEGER	& output specification \\
+\hline
+\etab 
+\ec
+
+{\tt InitPlot} is the function to be called before any other function of the 
+XPS library. In fact, an error message will be displayed on the screen and 
+the program will exit if other functions are called before {\tt InitPlot}.
+The parameter {\it OutPar} must assume values 0, 1 or 2. {\it OutPar=$0$} means 
+that only postscript output will be sent to a file with a name specified by 
+{\it PSFileName}. {\it OutPar=$1$} means that graphics is produced on an 
+X-window only. {\it OutPar=$2$} means that output is sent to both the X-window 
+and the postscript-file specified by {\it PSFileName}. 
+
+The size of the plot (the {\em plotting area}) is determined by {\it width} and 
+{\it height}. These
+are the sizes (in pixels) of an X-window. Choosing both parameters equal to
+600 yields a square postscript plot on an A4 sheet of paper filling 
+more or less the width  of that paper. Further reduction and squeezing can be 
+done ``by hand'' in the postscript file, by changing the scale-parameters.
+
+If output is sent to the X-window only, a postscript name still has to be 
+provided but this is not used.
+
+
+\item{\large Framing} \vs{1.5mm} \\
+Specify user (world-) coordinates \vs{1.5mm}\\
+{\tt Framing(Xll, Yll, Xur, Yur) }
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Xll	& double& REAL*8& lower-left X-user-coordinate \\
+\it Yll	& double& REAL*8& lower-left Y-user-coordinate \\
+\it Xur	& double& REAL*8& upper-right X-user-coordinate \\
+\it Yur	& double& REAL*8& upper-right Y-user-coordinate \\
+\hline
+\etab 
+\ec
+
+{\tt Framing} is the function to be called before starting the actual 
+drawing. An error message will be displayed on the screen when an attempt is
+made to draw e.g.\ a line before {\tt Framing} was called.
+
+{\tt Framing} specifies user (or world) coordinates for further drawing. 
+These coordinates specify an cartesian frame on the plot window in
+the users' own coordinates. {\it Xll}\ldots{\it Yur} specify the lower left
+and upper right corner of the plotting area in user coordinates. 
+
+{\em All plotting routines use user-coordinates for arguments specifying 
+positions}.
+ 
+\item{\large EndPlot} \vs{1.5mm} \\
+Stop the program \vs{1.5mm}\\
+{\tt Endplot()}
+
+If a stop-button is installed (see below), the program will wait until this
+button has been pressed. If no stop-button is installed, the program will
+terminate immediately.
+
+\item{\large PutStartButton} \vs{1.5mm} \\
+Put a start-button on the screen \vs{1.5mm} \\ 
+{\tt PutStartButton() } \\
+
+At any time, a start-button can be put on the X-window screen. The execution
+is then suspended until the start button is clicked with the mouse. 
+This may be helpful if drawing is going too fast and should be interrupted
+for a moment to inspect the drawing completed so far. 
+
+This function has no effect on the postscript output. 
+
+\item{\large PutStopButton}  \vs{1.5mm} \\
+Put a stop button on the screen  \vs{1.5mm} \\ 
+{\tt PutStopButton() } \\
+
+At any time, a stop-button can be put on the X-window screen. The execution
+is then terminated as soon as the stop button is clicked with the mouse. 
+Useful at the end of the program to enjoy the picture before exiting. 
+
+This function has no effect on the postscript output. 
+
+\item{\large Draw} \vs{1.5mm}\\ 
+Draw a line form starting point to final point as specified by arguments \vs{1.5mm} \\
+{\tt Draw(X1, Y1, X2, Y2) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X1	& double& REAL*8& X-user-coordinate of starting point\\
+\it Y1	& double& REAL*8& Y-user-coordinate of starting point\\
+\it X2	& double& REAL*8& X-user-coordinate of final point\\
+\it Y2	& double& REAL*8& Y-user-coordinate of final point \\
+\hline
+\etab 
+\ec
+
+Draws a line from {\it (X1, Y1)} to {\it (X2, Y2)}. Clipping is 
+performed on the border of the plotting area, i.e.\ the lines are cut off 
+at their intersection with the border of the plotting area. 
+
+\item{\large DrawTo} \vs{1.5mm} \\
+Draw a line from the last pen position to point specified by argument \vs{1.5mm} \\
+{\tt DrawTo(X, Y) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X	& double& REAL*8& X-user-coordinate of next point\\
+\it Y	& double& REAL*8& Y-user-coordinate of next point\\
+\hline
+\etab
+\ec
+For functions involving line drawing and writing, the point to which the 
+fictitious pen has moved after the last such action, is kept in memory. 
+{\tt DrawTo} draws a line form 
+this last point to the point specified by argument.
+
+In postscript, a line drawn to the current position results in no drawing.
+
+Clipping is 
+performed on the border of the plotting area. 
+
+\item{\large SetPoint} \vs{1.5mm} \\
+Plot a point at {\it (X, Y)}\vs{1.5mm}\\
+{\tt SetPoint(X, Y) }
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X	& double& REAL*8& X-user-coordinate of point\\
+\it Y	& double& REAL*8& Y-user-coordinate of point\\
+\hline
+\etab
+\ec
+
+Plots a point at the location specified by user coordinates {\it (X, Y)}
+if this point lies inside the plotting area. The last pen position is 
+moved to this point, so a subsequent call to {\tt DrawTo} will draw 
+a line form the point {\it (X, Y)} to the point specified in the {\tt DrawTo} call.
+
+
+\item{\large DrawCircle} \vs{1.5mm} \\
+Draws a circle \vs{1.5mm} \\
+{\tt DrawCircle(X, Y, Radius) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X	& double& REAL*8& X-user-coordinate of center\\
+\it Y	& double& REAL*8& Y-user-coordinate of center\\
+\it Radius	& double& REAL*8& Radius in user-coordinates\\
+\hline
+\etab
+\ec
+
+A circle around {\it (X,Y)} is drawn. The radius is in user coordinates used 
+along the X-axis.
+The circle will always be drawn with two equal axes, even if the scale of
+the $X$ and $Y$ axes are not identical.
+
+\item{\large DrawRectangle} \vs{1.5mm} \\
+Draws a rectangle \vs{1.5mm} \\
+{\tt DrawRectangle(X1, Y1, X2, Y2) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X1	& double& REAL*8& X-user-coordinate of lower-left point\\
+\it Y1	& double& REAL*8& Y-user-coordinate of lower-left point\\
+\it X2	& double& REAL*8& X-user-coordinate of upper-right point\\
+\it Y2	& double& REAL*8& Y-user-coordinate of upper-right point\\
+\hline
+\etab
+\ec
+
+A rectangle is drawn. Opposite points are specified 
+by {\it (X1, Y1)} and {\it(X2,Y2)} resp. 
+
+\item{\large FillRectangle} \vs{1.5mm} \\
+Draws a rectangle filled black\vs{1.5mm} \\
+{\tt FillRectangle(X1, Y1, X2, Y2) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X1	& double& REAL*8& X-user-coordinate of lower-left point\\
+\it Y1	& double& REAL*8& Y-user-coordinate of lower-left point\\
+\it X2	& double& REAL*8& X-user-coordinate of upper-right point\\
+\it Y2	& double& REAL*8& Y-user-coordinate of upper-right point\\
+\hline
+\etab
+\ec
+
+A rectangle is drawn and filled black. Opposite points are specified 
+by {\it (X1, Y1)} and {\it(X2,Y2)} resp. 
+
+
+\item{\large FillPolygon} \vs{1.5mm} \\
+Draws a polygon filled black\vs{1.5mm} \\
+{\tt FillPolygon(Points, NPoints) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Points & double[]& REAL*8 (npoints,2) & Array containing points\\
+\it NPoints& int     & REAL*8	& number of points\\
+\hline
+\etab
+\ec
+
+Draws a polygon through {\it Points} and fills it black. Points should in 
+Fortran be a {\tt REAL*8} array of dimension precisely {\it NPoints $\times$ 2}.
+This array specifies the points defining the polygon to be filled. {\it NPoints}
+is the number of points of the polygon. 
+
+\item{\large SetLineStyle} \vs{1.5mm} \\
+Set the current line style \vs{1.5mm} \\
+{\tt SetLineStyle(Style) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Style& int& INTEGER& code for line style (see below)\\
+\hline
+\etab
+\ec
+
+A call to this function sets the new line style. All drawing after this call 
+will be done in the new line style, until a new call to this function
+is performed. There exist four different
+predefined line styles. The default style is 0, corresponding to solid line 
+style. 1 means dashed line style, 2 dotted, and 3 dashed-dotted line style.
+The size of the dashes and the distances between the dots are determined by
+the current dash length (see {\tt SetDashLength}).
+
+\item{\large SetDashLength} \vs{1.5mm} \\
+Set the current dash length \vs{1.5mm} \\
+{\tt SetDashLength(Length) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Length& int& INTEGER& new dash length\\
+\hline
+\etab
+\ec
+
+This function is used to set the dash length for drawing until another call
+to this function is made. 
+In dashed line style, the dashes are twice the dash length and they are
+separated by white spaces of one dash length. The dots in dotted line style
+are separated by one dash length. In dash-dotted style, the dashes are two 
+dash lengths long, and dashes and dots are separated by a dash length.
+{\tt InitPlot} sets the dash length equal to 5 for X-windows. The dash length for
+postscript is automatically rescaled to an equivalent length.
+
+\item{\large SetLineWidth} \vs{1.5mm} \\
+Set the current line width \vs{1.5mm} \\
+{\tt SetLineWidth(Width) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Width& int& INTEGER& new line width\\
+\hline
+\etab
+\ec
+
+This function is used to set the line width to a new value, {\it width}. 
+The width is given in pixels, default is 1. 
+
+\item{\large SetNamedColor} \vs{1.5mm} \\
+Set X-window color by specifying color name \vs{1.5mm} \\
+{\tt SetNamedColor (ColorName) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it ColorName	& char * & CHARACTER **& color name\\
+\hline
+\etab
+\ec
+
+This function has no effect on the postscript output. 
+For X-output, the color of subsequent drawing can be set by specifying
+the name of the desired color. Possible color names can be found in directory
+{\tt /usr/local/X11R5/lib/X11} or a similar one, depending on the implementation
+of X. This method of specifying colors by their is very convenient, but slow.
+
+
+\item{\large SetNamedBackground} \vs{1.5mm} \\
+Set X-window color by specifying color name \vs{1.5mm} \\
+{\tt SetNamedBackground (ColorName) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it ColorName	& char * & CHARACTER **& color name\\
+\hline
+\etab
+\ec
+
+This function has no effect on the postscript output. 
+For X-output, the color of the background drawing can be set by specifying
+the name of the desired background color. Possible color names can be found in directory
+{\tt /usr/local/X11R5/lib/X11} or a similar one, depending on the implementation
+of X. 
+
+
+\item{\large MoveTo} \vs{1.5mm} \\
+Move current position to point specified by argument \vs{1.5mm} \\
+{\tt MoveTo(X, Y) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it X	& double& REAL*8& X-user-coordinate of point\\
+\it Y	& double& REAL*8& Y-user-coordinate of point\\
+\hline
+\etab
+\ec
+
+Moves the current position to {\it (X, Y)}. Use of this 
+function is to write text or numbers starting at a position specified
+by {\it (X, Y)}.
+
+
+\item{\large SetFont} \vs{1.5mm} \\
+Sets font style and size \vs{1.5mm} \\
+{\tt SetFont(FontName, Weight, Orientation, Size) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it FontName	& char *& CHARACTER **	& font name\\
+\it Weight	& char *& CHARACTER **	& font weight\\
+\it Orientation	& char *& CHARACTER **	& orientation\\
+\it Size  	& int	& INTEGER	& font size\\
+\hline
+\etab
+\ec
+
+SetFont sets the font style and size for writing text and numbers on
+the screen. The character-type arguments are case-insensitive.
+
+The {\it FontName} must be a string starting with ``T'' or ``t'' (for ``Times''),
+ ``H'' or ``h'' (``Helvetica),  ``C'' or ``c'' (``Courier''),  ``N'' or ``n'' 
+(``NewCenturySchlbk'') or  ``S'' or ``s'' (``Symbol''). These are some of the
+most common adobe-fonts. It is believed that this choice will satisfy most
+of the needs. 
+
+{\it Weight} is either a string starting with ``m'' (from ``medium'') or ``b'' (``bold''). Furthermore,
+{\it Orientation} a string starting with either ``r'' (``roman''), ``i''
+(``italic'') or ``o'' (``oblique''). Oblique may only be used with 
+fonts Courier and Helvetica, italic only with Times and NewCenturySchlbk.
+Symbol can only have roman and medium for {\it Orientation} and {\it Weight} resp. 
+
+{\it Size} is typically 12, 14, 18, 20 etc. 
+
+This function may cause an error when a font cannot be found by the 
+X-server. Furthermore, not all postscript printers have all these fonts at
+their disposal. Sometimes, a font is not found when using ghostscript to 
+preview the plot, but it comes out of the printer correctly\ldots
+
+\item{\large WriteText} \vs{1.5mm} \\
+Plots {\it Text} starting at the current pen position. \vs{1.5mm} \\
+{\tt WriteText(Text) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Text& char *& CHARACTER**& text to be written\\
+\hline
+\etab
+\ec
+
+Writes {\it Text} starting from the current position.
+Most often, a call to this function is preceded by a call to {\tt MoveTo} or
+to another write-function.
+
+The left end of the plotted text starts at the {\it X}--coordinate 
+of the current position. The 
+{\it Y}--coordinate of the current position specifies the {\em mean} height of the written text,
+that is, not the bottom line.  
+
+The current position becomes the right end of the text plotted. 
+
+\item{\large WriteInt} \vs{1.5mm} \\
+Plot the {\it Number} using {\it CharNum} characters \vs{1.5mm} \\
+{\tt WriteInt(Number, CharNum) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Number& int & INTEGER& number to be written\\
+\it CharNum& int & INTEGER& number of characters used to write {\it Number}\\
+\hline
+\etab
+\ec
+
+Writes {\it Number} using {\it CharNum} digits starting from the current 
+position.
+Most often, a call to this function is preceded by a call to {\tt MoveTo} or
+to another write-function.
+
+The left end of the plotted number starts at the current {\it X}--coordinate.
+The current {\it Y}--coordinate specifies the {\em mean} height of the written text,
+that is, not the bottom line.  
+
+The current position becomes the right end of the text plotted. 
+
+\item{\large WriteFloat} \vs{1.5mm} \\
+Write a real number  \vs{1.5mm} \\
+{\tt WriteFloat(Number, TotChar, DecChar) } 
+\bc
+\btab{llll}
+\hline
+ Parameter &  C-Type &  FORTRAN-Type & Meaning \\ 
+\hline 
+\it Number& double & REAL*8 & number to be written\\
+\it CharNum& int & INTEGER & total number of characters used to write {\it Number}\\
+\it DecChar& int & INTEGER & number of decimals used to write {\it Number}\\
+\hline
+\etab
+\ec
+
+Writes {\it Number} using {\it TotChar} characters and {\it DecChar} decimals
+starting from the current position.
+Most often, a call to this function is preceded by a call to {\tt MoveTo} or
+to another write-function.
+
+The left end of the plotted number starts at the current {\it X}--coordinate.
+The current
+{\it Y}--coordinate specifies the {\em mean} height of the written text,
+that is, not the bottom line.  
+
+The current position becomes the right end of the text plotted. 
+
+
+
+\ei
+\end{document}
