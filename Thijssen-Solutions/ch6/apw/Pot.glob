@@ -1,0 +1,11 @@
+      INTEGER MaxPotNum
+
+      PARAMETER (MaxPotNum = 400) 
+
+      DOUBLE PRECISION Potential(0:MaxPotNum), IntPoints(0:MaxPotNum), 
+     .                 DerivPoints(0:MaxPotNum), MultArray(0:MaxPotNum),
+     .                 OneMD, OnePD, Delta, R0
+
+      COMMON /Potential/ Potential, IntPoints, DerivPoints, MultArray, 
+     .                   OneMD, OnePD, Delta, R0
+

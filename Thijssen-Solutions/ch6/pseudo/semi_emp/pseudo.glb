@@ -1,0 +1,20 @@
+      IMPLICIT NONE
+
+      INTEGER NumberKA, NumberKAB, MaxLevel
+
+      PARAMETER (NumberKA=27, NumberKAB=113, MaxLevel=10)
+
+      INTEGER   DistMatrix(-6:6,-6:6,-6:6),
+     .          KVec(NumberKAB,3)
+
+      DOUBLE PRECISION RecLatConst,
+     .          GammaPoint(3), LPoint(3), KPoint(3), XPoint(3),
+     .          UPoint(3), PseudConst(0:3), LowLevels(MaxLevel)
+
+C Reciprocal lattice constant 2*PI/a :
+      PARAMETER (RecLatConst = 0.6088D0)
+
+      COMMON    PseudConst, LowLevels,
+     .          GammaPoint, KPoint, XPoint, LPoint, UPoint,
+     .          DistMatrix, KVec
+

@@ -1,0 +1,25 @@
+      IMPLICIT NONE
+
+      INTEGER NumberKA, MaxL, MaxSol, PotNum
+
+      PARAMETER (NumberKA=27, MaxL=5, MaxSol=1000)
+
+      INTEGER   DistMatrix(-6:6,-6:6,-6:6),
+     .          KVec(NumberKA,3), ResNum
+
+      DOUBLE PRECISION RecLatConst, PI, LatConst, UnitVol, 
+     .          GammaPoint(3), LPoint(3), KPoint(3), XPoint(3),
+     .          UPoint(3), WPoint(3), Precision, FArr(MaxSol), 
+     .          MatA(NumberKA, NumberKA), MatB(NumberKA, NumberKA), 
+     .          MatC(NumberKA, NumberKA, 0:MaxL), 
+     .          RMuffinTin, ChiR(0:MaxL), ChiDotR(0:MaxL), HStep
+
+      PARAMETER (Precision=0.0001D0)
+
+      COMMON /APWCOM/ LatConst, RecLatConst, PI, UnitVol, MatA, MatB, 
+     .        MatC, 
+     .        GammaPoint, KPoint, XPoint, LPoint, UPoint, WPoint, 
+     .        ChiDotR, ChiR, HStep, 
+     .        FArr, RMuffinTin, DistMatrix, KVec, 
+     .        ResNum, PotNum
+
